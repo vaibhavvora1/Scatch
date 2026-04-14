@@ -1,0 +1,113 @@
+usermodel
+full name - string
+email - string
+password -string
+cart - array
+isadmin - boolean
+orders -array
+contact - number
+picture - db
+
+
+
+
+productmodel
+image
+name
+price 
+discount
+bgcolor
+panelcolor
+textcolor
+
+
+we make models owner , user and products 
+but in model we can not write connection 
+
+we make mongoose connection in config folder 
+after we install debug from npm 
+debug aise nahi bataye ga console me isliye terminal me $env:DEBUG="development:*" likhna pdega 
+tab hum jb development me hoge tab hi console me dikhayega 
+but for that time mongodb connect with this pc 
+but in server wo yahi url ke sath jayega to wo nahi ho payega connect 
+that's why we make development.json file in config 
+and install config from npm 
+after json file ko mogoose connect me le liya 
+json file ke andar ka MONGODB_URI environment dekhke connect hoga
+
+
+fir hmne routes banaye 
+and usko postman me check kiya
+
+
+fir hum environment set krenge 
+ $env:NODE_ENV="development"
+ process.env.NODE_ENV=development
+
+ and hm bad me chage krenge into production 
+
+
+fir hmne userroutes pe kam kiya 
+hmne waha pe validation lagaya 
+joi ke through 
+and user create kiya 
+
+
+phir hmne authentication  jwt and bcrypt se dala 
+
+phir hmne config me keys.js se file banai 
+hmne usme jwt key store kaha hui hai wo likha 
+
+phir .env me jwt key likhi
+phir app.js me dotenv require kiya jo npm packages se install kiya 
+and dotenv.config se require kiya 
+
+
+jo token hmne banaya usko hm utils ke gettoken me store krenge 
+waha se hm usse export krke layenge 
+
+ab jo hamara userroute me register route ke bad jo function hai us function ko hm controller me authcontroller.js me le jayega 
+waha registeruser me sab save krenge jo token existing user sab 
+fir hm userroute me wo import krenge 
+
+fir hm validation me uservalidatin file banayege and usme hm joi vala validation lenge and usko hm authcontroller me import krenge 
+
+fir hm authcontroller me login route banayenge 
+usme hm pehle validation chalatyenge 
+bad me hm user find krenge aur uska data magayenge 
+aur password compare krenge 
+aur sab sahi hoga to token cookies me store hoga 
+
+
+
+
+
+
+
+
+
+config me hm config and database connection file rakhenge 
+controller me hm auth , user ,product etc ke contoller file rakhenge
+models me hm sabhi ke models rakhege 
+routes me hm sabhi routes rakhenge 
+utils me hm token or dusri item rakhenge 
+validataion me hm validation ki chij rakhenge 
+
+
+
+
+
+
+
+which routes what works 
+/ -> sign up or login
+/shop -> shop
+/users/cart -> cart
+/admin -> admin panel
+/owner/products -> show all products
+/owner/admin -> show admin panel to create products 
+
+
+
+
+

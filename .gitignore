@@ -1,4 +1,34 @@
-node_modules
-.env
-plan.txt
+# Node modules
+node_modules/
 
+# Environment variables (CRITICAL)
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Database backups
+backup/
+
+# Images (optional - if dynamic/uploads)
+images/uploads/
+
+# Temporary files
+tmp/
+temp/
+
+# Nested repo mistake (your case)
+Scatch/
+
+# Build / cache
+dist/
+.cache/
