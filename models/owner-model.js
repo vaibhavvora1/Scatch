@@ -8,6 +8,7 @@ const ownerschema = mongoose.Schema(
       trim: true,
       min: 3,
     },
+
     email: {
       type: String,
     },
@@ -21,6 +22,10 @@ const ownerschema = mongoose.Schema(
     },
     gstin: String,
     picture: String,
+    activeSessionId: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );

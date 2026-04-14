@@ -1,14 +1,15 @@
 // mongoose setup
-const mongoose = require("mongoose");
-const config = require("config");
+const mongoose = require("mongoose"); //for database connection
+require("dotenv").config(); //for environment variables
 
-const dbgr = require("debug")("development:mongoose");
+const dbgr = require("debug")("development:mongoose"); //for debugging
 
 //connect database server with error handling
 
 mongoose
-  .connect(`${config.get("MONGODB_URI")}/scatch`)
+  .connect(process.env.MONGO_URI) //connect to database server
   .then(function () {
+    //database connection successful
     dbgr("connected");
   })
   .catch(function (err) {
