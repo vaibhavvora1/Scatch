@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -12,27 +11,29 @@ const app = express();
 require("./config/mogoose-connect");
 
 // ── CORS (allow React dev server + same-origin in prod) ──────
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowed = [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://127.0.0.1:5173",
-      "https://scatch-pied.vercel.app"
-    ];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowed = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "https://scatch-snowy.vercel.app/",
+      ];
 
-    // allow tools like Postman / server-to-server
-    if (!origin) return callback(null, true);
+      // allow tools like Postman / server-to-server
+      if (!origin) return callback(null, true);
 
-    if (allowed.includes(origin)) {
-      return callback(null, true);
-    }
+      if (allowed.includes(origin)) {
+        return callback(null, true);
+      }
 
-    console.log("Blocked CORS origin:", origin);
-    return callback(null, false);
-  },
-  credentials: true
-}));
+      console.log("Blocked CORS origin:", origin);
+      return callback(null, false);
+    },
+    credentials: true,
+  }),
+);
 
 // ── Body parsing ─────────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
