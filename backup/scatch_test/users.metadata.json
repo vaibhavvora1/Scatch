@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"email":{"$numberInt":"1"}},"name":"email_1","unique":true},{"v":{"$numberInt":"2"},"key":{"fullname":{"$numberInt":"1"}},"name":"fullname_1"}],"uuid":"6016620710514be2b0b83e2bbb6771c7","collectionName":"users","type":"collection"}
