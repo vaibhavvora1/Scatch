@@ -1216,7 +1216,22 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: wrap;
+}
+
+.nav-desktop-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-menu-toggle {
+  display: none;
 }
 .nav-link,
 .nav-link-mobile {
@@ -1255,7 +1270,24 @@ select:focus {
 }
 
 .nav-mobile-panel {
-  background: rgba(12, 24, 52, 0.96);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 18px 42px rgba(15, 23, 34, 0.08);
+}
+
+.shop-filter-toggle {
+  display: none !important;
+}
+
+.checkout-address-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.checkout-address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 /* ── Shop Video Hero ─────────────────────────────── */
@@ -1343,19 +1375,36 @@ select:focus {
   }
 
   .shop-sidebar {
+    display: none;
     width: 100% !important;
     position: relative !important;
     top: auto !important;
   }
 
+  .shop-sidebar.shop-sidebar-open {
+    display: block;
+  }
+
   .shop-layout {
     flex-direction: column;
+  }
+
+  .shop-filter-toggle {
+    display: flex !important;
   }
 }
 
 @media (max-width: 768px) {
   .premium-navbar {
     padding: 0.9rem 0.9rem;
+  }
+
+  .nav-desktop-links {
+    display: none;
+  }
+
+  .nav-menu-toggle {
+    display: inline-flex;
   }
 
   .nav-logo {
@@ -1389,6 +1438,17 @@ select:focus {
     line-height: 1.04;
   }
 
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding-top: 8.5rem !important;
+  }
+
+  .hero-video-card {
+    aspect-ratio: 16 / 11 !important;
+    transform: none !important;
+  }
+
   .preview-modal {
     padding: 1rem;
   }
@@ -1415,6 +1475,18 @@ select:focus {
 
   .hero-stat-row {
     flex-direction: column;
+  }
+
+  .nav-inner {
+    align-items: flex-start;
+  }
+
+  .nav-actions {
+    gap: 0.8rem;
+  }
+
+  .checkout-address-grid {
+    grid-template-columns: 1fr;
   }
 
   .shop-layout {

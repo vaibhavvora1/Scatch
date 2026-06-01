@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import gsap from 'gsap';
-import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX, FiHeart } from 'react-icons/fi';
+import { FiShoppingBag, FiSearch, FiMenu, FiX, FiHeart } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -23,6 +23,15 @@ export default function Navbar() {
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handler = (event) => {
+      if (event.key === 'Escape') setSearchOpen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [searchOpen]);
 
   // Slide in on mount
   useEffect(() => {
@@ -62,7 +71,7 @@ export default function Navbar() {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 premium-navbar ${scrolled ? 'nav-blur' : ''}`}
         style={{ padding: '1rem clamp(1rem, 4vw, 2rem)' }}
       >
-        <div className="nav-inner" style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="nav-inner" style={{ maxWidth: '1400px', margin: '0 auto' }}>
           
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none' }}>
@@ -73,7 +82,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop links */}
-          <ul style={{ display: 'flex', gap: '2.5rem', listStyle: 'none' }} className="hidden md:flex">
+          <ul className="nav-desktop-links">
             {links.map((l) => (
               <li key={l.to}>
                 <motion.div whileHover={{ y: -2 }} whileTap={{ scale: .98 }}>
@@ -89,18 +98,18 @@ export default function Navbar() {
           </ul>
 
           {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div className="nav-actions">
             {/* Search */}
-            <button onClick={() => setSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
+            <button aria-label="Search products" onClick={() => setSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
               <FiSearch />
             </button>
 
             {isLoggedIn ? (
               <>
-                <Link to="/wishlist" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', textDecoration: 'none' }}>
+                <Link to="/wishlist" aria-label="Wishlist" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', textDecoration: 'none' }}>
                   <FiHeart />
                 </Link>
-                <Link to="/cart" style={{ position: 'relative', color: 'var(--text-secondary)', fontSize: '1.2rem', textDecoration: 'none' }}>
+                <Link to="/cart" aria-label="Cart" style={{ position: 'relative', color: 'var(--text-secondary)', fontSize: '1.2rem', textDecoration: 'none' }}>
                   <FiShoppingBag />
                   {cartCount > 0 && (
                     <span style={{
@@ -115,7 +124,7 @@ export default function Navbar() {
                   )}
                 </Link>
                 <div style={{ position: 'relative' }} className="group">
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <button aria-label="Account menu" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                     {user?.picture
                       ? <img src={user.picture} alt="avatar" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--accent)' }} />
                       : <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '.75rem', fontWeight: 700 }}>
@@ -166,7 +175,7 @@ export default function Navbar() {
             )}
 
             {/* Hamburger */}
-            <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '1.3rem' }}>
+            <button aria-label="Toggle navigation menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)} className="nav-menu-toggle" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '1.3rem' }}>
               {menuOpen ? <FiX /> : <FiMenu />}
             </button>
           </div>

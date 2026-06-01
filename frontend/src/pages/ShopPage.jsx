@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { productsAPI } from '../api/client';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
-import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
+import { FiFilter, FiSearch } from 'react-icons/fi';
 
 const CATEGORIES = ['all', 'clothing', 'footwear', 'accessories', 'electronics', 'home', 'beauty'];
 const BADGES     = ['all', 'trending', 'featured', 'new-arrival', 'best-seller'];
@@ -15,7 +15,7 @@ const SORTS      = [
   { label: 'Best Selling', value: 'totalSold', order: 'desc' },
 ];
 
- const SHOP_HERO_VIDEO = '/media/scatch-hero.mp4';
+const SHOP_HERO_VIDEO = '/media/scatch-hero.mp4';
 
 function SkeletonCard() {
   return (
@@ -42,8 +42,8 @@ export default function ShopPage() {
     search:   searchParams.get('search')   || '',
     category: searchParams.get('category') || '',
     badge:    searchParams.get('badge')    || '',
-    sort:     'createdAt',
-    order:    'desc',
+    sort:     searchParams.get('sort')      || 'createdAt',
+    order:    searchParams.get('order')     || 'desc',
     page:     Number(searchParams.get('page')) || 1,
   });
 
@@ -53,9 +53,26 @@ export default function ShopPage() {
       search:   searchParams.get('search')   || '',
       category: searchParams.get('category') || '',
       badge:    searchParams.get('badge')    || '',
+      sort:     searchParams.get('sort')      || 'createdAt',
+      order:    searchParams.get('order')     || 'desc',
       page:     Number(searchParams.get('page')) || 1,
     }));
   }, [searchParams]);
+
+  useEffect(() => {
+    const next = new URLSearchParams();
+    if (filters.search) next.set('search', filters.search);
+    if (filters.category) next.set('category', filters.category);
+    if (filters.badge) next.set('badge', filters.badge);
+    if (filters.sort !== 'createdAt') next.set('sort', filters.sort);
+    if (filters.order !== 'desc') next.set('order', filters.order);
+    if (filters.page > 1) next.set('page', String(filters.page));
+
+    const nextString = next.toString();
+    if (nextString !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [filters, searchParams, setSearchParams]);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -122,10 +139,7 @@ export default function ShopPage() {
 
       <div className="shop-layout" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
         {/* ── Sidebar Filters ─── */}
-        <aside className="shop-sidebar md:block" style={{
-          width: '240px', flexShrink: 0,
-          display: showFilters ? 'block' : 'none',
-        }}>
+        <aside className={`shop-sidebar ${showFilters ? 'shop-sidebar-open' : ''}`} style={{ width: '240px', flexShrink: 0 }}>
           <div className="glass" style={{ borderRadius: '1.25rem', padding: '1.5rem', position: 'sticky', top: '90px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h3 style={{ fontWeight: 600, fontSize: '.9rem' }}>Filters</h3>
@@ -201,7 +215,7 @@ export default function ShopPage() {
         {/* ── Products Grid ─── */}
         <div className="shop-main" style={{ flex: 1 }}>
           {/* Mobile filter toggle */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }} className="md:hidden">
+          <div className="shop-filter-toggle" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
             <button onClick={() => setShowFilters(!showFilters)} className="btn-magnetic btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
               <FiFilter /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
             </button>

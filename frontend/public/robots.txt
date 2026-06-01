@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://scatch-snowy.vercel.app/sitemap.xml

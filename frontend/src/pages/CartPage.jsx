@@ -11,11 +11,30 @@ export default function CartPage() {
   const { cart, cartTotal, updateItem, removeItem, clearCart } = useCart();
   const navigate = useNavigate();
   const [checkingOut, setCheckingOut] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState({
+    name: '',
+    phone: '',
+    line1: '',
+    city: '',
+    state: '',
+    pincode: '',
+  });
+
+  const addressText = Object.values(shippingAddress).map((value) => value.trim()).filter(Boolean).join(', ');
+  const isAddressValid = Object.values(shippingAddress).every((value) => value.trim().length >= 2);
+
+  const updateAddress = (key, value) => {
+    setShippingAddress((current) => ({ ...current, [key]: value }));
+  };
 
   const handleCheckout = async () => {
+    if (!isAddressValid) {
+      toast.error('Please complete your shipping details');
+      return;
+    }
     setCheckingOut(true);
     try {
-      await ordersAPI.checkout({ address: '' });
+      await ordersAPI.checkout({ address: addressText, shippingAddress });
       toast.success('Order placed successfully! 🎉');
       navigate('/orders');
     } catch (err) {
@@ -101,6 +120,17 @@ export default function CartPage() {
           {/* Summary */}
           <div className="glass" style={{ borderRadius: '1.25rem', padding: '1.75rem', position: 'sticky', top: '100px' }}>
             <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', marginBottom: '1.5rem' }}>Order Summary</h3>
+            <div className="checkout-address-form">
+              <p style={{ color: 'var(--text-secondary)', fontSize: '.78rem', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: '.75rem' }}>Shipping Details</p>
+              <input className="input-luxury" placeholder="Full name" value={shippingAddress.name} onChange={(e) => updateAddress('name', e.target.value)} />
+              <input className="input-luxury" placeholder="Phone number" value={shippingAddress.phone} onChange={(e) => updateAddress('phone', e.target.value)} />
+              <textarea className="input-luxury" rows="3" placeholder="Address line" value={shippingAddress.line1} onChange={(e) => updateAddress('line1', e.target.value)} />
+              <div className="checkout-address-grid">
+                <input className="input-luxury" placeholder="City" value={shippingAddress.city} onChange={(e) => updateAddress('city', e.target.value)} />
+                <input className="input-luxury" placeholder="State" value={shippingAddress.state} onChange={(e) => updateAddress('state', e.target.value)} />
+              </div>
+              <input className="input-luxury" placeholder="PIN code" value={shippingAddress.pincode} onChange={(e) => updateAddress('pincode', e.target.value)} />
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.75rem' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Subtotal</span>
               <span>{formatINR(cartTotal)}</span>
@@ -114,7 +144,7 @@ export default function CartPage() {
               <span>Total</span>
               <span style={{ color: '#5b7dff' }}>{formatINR(cartTotal)}</span>
             </div>
-            <button onClick={handleCheckout} disabled={checkingOut} className="btn-magnetic btn-primary" style={{ width: '100%', justifyContent: 'center', gap: '.5rem' }}>
+            <button onClick={handleCheckout} disabled={checkingOut || !isAddressValid} className="btn-magnetic btn-primary" style={{ width: '100%', justifyContent: 'center', gap: '.5rem', opacity: checkingOut || !isAddressValid ? .6 : 1 }}>
               <FiShoppingBag />
               {checkingOut ? 'Placing Order...' : 'Place Order'}
               <FiArrowRight />
@@ -129,4 +159,3 @@ export default function CartPage() {
     </div>
   );
 }
-
