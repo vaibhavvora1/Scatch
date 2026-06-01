@@ -5,7 +5,16 @@ const userModel = require("../../models/user-model");
 const isOwner = require("../../middlewares/isowner");
 const { cache, clearCacheTags } = require("../../utils/api-cache");
 const multer = require("multer");
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Only image uploads are allowed"));
+    }
+    cb(null, true);
+  },
+});
 
 router.use(isOwner);
 

@@ -3,7 +3,16 @@ const router     = express.Router();
 const userModel  = require("../../models/user-model");
 const isLoggedIn = require("../../middlewares/isLoggedin");
 const multer     = require("multer");
-const upload     = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 1 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Only image uploads are allowed"));
+    }
+    cb(null, true);
+  },
+});
 const { clearCacheTags } = require("../../utils/api-cache");
 
 router.use(isLoggedIn);

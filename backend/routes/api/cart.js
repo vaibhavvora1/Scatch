@@ -1,6 +1,7 @@
 const express    = require("express");
 const router     = express.Router();
 const userModel  = require("../../models/user-model");
+const productModel = require("../../models/product-model");
 const isLoggedIn = require("../../middlewares/isLoggedin");
 
 // All cart routes require auth
@@ -19,12 +20,23 @@ router.get("/", async (req, res) => {
 // POST /api/cart/add/:productId
 router.post("/add/:productId", async (req, res) => {
   try {
+    const product = await productModel.findById(req.params.productId).select("stock");
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+    if (product.stock <= 0) {
+      return res.status(400).json({ success: false, message: "Product is out of stock" });
+    }
+
     const user = await userModel.findById(req.user._id);
     const existing = user.cart.find(
       (item) => item.product && item.product.toString() === req.params.productId
     );
 
     if (existing) {
+      if (existing.quantity >= product.stock) {
+        return res.status(400).json({ success: false, message: "No more stock available" });
+      }
       existing.quantity += 1;
     } else {
       user.cart.push({ product: req.params.productId, quantity: 1 });
@@ -48,6 +60,10 @@ router.patch("/update/:itemId", async (req, res) => {
     if (!item) return res.status(404).json({ success: false, message: "Cart item not found" });
 
     if (action === "increase") {
+      const product = await productModel.findById(item.product).select("stock");
+      if (!product || item.quantity >= product.stock) {
+        return res.status(400).json({ success: false, message: "No more stock available" });
+      }
       item.quantity += 1;
     } else if (action === "decrease") {
       if (item.quantity > 1) {

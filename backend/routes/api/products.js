@@ -22,30 +22,40 @@ router.get("/", cache(60, ["products"]), async (req, res) => {
       limit = 20,
     } = req.query;
 
+    const allowedSorts = new Set(["createdAt", "price", "totalSold", "rating", "views"]);
+    const safePage = Math.max(1, Number(page) || 1);
+    const safeLimit = Math.min(48, Math.max(1, Number(limit) || 20));
+    const safeMinPrice = Math.max(0, Number(minPrice) || 0);
+    const safeMaxPrice = Math.max(safeMinPrice, Number(maxPrice) || 9999999);
+    const safeSort = allowedSorts.has(sort) ? sort : "createdAt";
+
     const query = {};
 
-    if (search) query.name = { $regex: search, $options: "i" };
+    if (search) {
+      const safeSearch = String(search).trim().slice(0, 80).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      query.name = { $regex: safeSearch, $options: "i" };
+    }
     if (category) query.category = category;
     if (badge) query.badge = badge;
-    query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+    query.price = { $gte: safeMinPrice, $lte: safeMaxPrice };
 
-    const sortObj = { [sort]: order === "asc" ? 1 : -1 };
+    const sortObj = { [safeSort]: order === "asc" ? 1 : -1 };
 
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (safePage - 1) * safeLimit;
     const total = await productModel.countDocuments(query);
     const products = await productModel
       .find(query)
       .populate("seller", "shopName shopLogo rating")
       .sort(sortObj)
       .skip(skip)
-      .limit(Number(limit));
+      .limit(safeLimit);
 
     return res.json({
       success: true,
       products,
       total,
-      page: Number(page),
-      pages: Math.ceil(total / Number(limit)),
+      page: safePage,
+      pages: Math.ceil(total / safeLimit),
     });
   } catch (err) {
     console.error(err);
